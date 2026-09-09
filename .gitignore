@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .env
+.env.example
 data/chroma_db/
 data/web_cache/
 tests/test_results.json
