@@ -1,0 +1,165 @@
+{
+  "name": "ZAIO Student Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "student-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1f1a1f2e-0000-4000-8000-000000000001",
+      "name": "Webhook - Receive Question",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-260, 300],
+      "webhookId": "zaio-student-assistant"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/ask",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"question\": $json.body.question || $json.query.question || $json.question } }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "1f1a1f2e-0000-4000-8000-000000000002",
+      "name": "Call RAG API (/ask)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-20, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1f1a1f2e-0000-4000-8000-000000000003",
+      "name": "Answer Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"answer\": $json.answer, \"source\": $json.source } }}",
+        "options": {}
+      },
+      "id": "1f1a1f2e-0000-4000-8000-000000000004",
+      "name": "Respond - Answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [440, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"answer\": $json.answer, \"source\": \"\" } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "1f1a1f2e-0000-4000-8000-000000000005",
+      "name": "Respond - Not Found",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [440, 420]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "channelId": {
+          "mode": "list",
+          "value": "student-questions"
+        },
+        "text": "=*Question:* {{ $('Webhook - Receive Question').item.json.body.question }}\n*Answer:* {{ $json.answer }}\n*Source:* {{ $json.source }}"
+      },
+      "id": "1f1a1f2e-0000-4000-8000-000000000006",
+      "name": "(Optional) Forward to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [680, 200],
+      "notes": "Disabled by default - connect credentials and enable to forward answers to a Slack channel.",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Webhook - Receive Question": {
+      "main": [
+        [
+          {
+            "node": "Call RAG API (/ask)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call RAG API (/ask)": {
+      "main": [
+        [
+          {
+            "node": "Answer Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Found?": {
+      "main": [
+        [
+          {
+            "node": "Respond - Answer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond - Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond - Answer": {
+      "main": [
+        [
+          {
+            "node": "(Optional) Forward to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "description": "Receives a student's question via webhook, calls the ZAIO RAG API (POST /ask), and returns the answer + source. Optionally forwards the Q&A to Slack. Import this file directly into n8n (Workflows -> Import from File)."
+  }
+}

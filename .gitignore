@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+data/chroma_db/
+data/web_cache/
+tests/test_results.json
+tests/test_results.md
+.venv/

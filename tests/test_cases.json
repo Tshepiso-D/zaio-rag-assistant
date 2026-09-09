@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "question": "What is the attendance requirement?",
+    "expected_source_type": "handbook",
+    "notes": "Should retrieve the Attendance Requirements page and cite an 80% figure."
+  },
+  {
+    "id": 2,
+    "question": "What happens if a student's attendance falls below the required threshold?",
+    "expected_source_type": "handbook",
+    "notes": "Tests multi-sentence synthesis from a single handbook page."
+  },
+  {
+    "id": 3,
+    "question": "How many times can a student resubmit a project after receiving Not Yet Competent?",
+    "expected_source_type": "handbook",
+    "notes": "Specific factual detail (one resubmission, 14 days)."
+  },
+  {
+    "id": 4,
+    "question": "What are the requirements to graduate from a Zaio bootcamp?",
+    "expected_source_type": "handbook",
+    "notes": "Tests retrieval of a list-style answer."
+  },
+  {
+    "id": 5,
+    "question": "What is Zaio's code of conduct regarding plagiarism?",
+    "expected_source_type": "handbook",
+    "notes": "Tests retrieval from the Code of Conduct page."
+  },
+  {
+    "id": 6,
+    "question": "What courses / bootcamps does ZAIO offer?",
+    "expected_source_type": "website",
+    "notes": "Should list bootcamps such as Full Stack AI Engineer, Cloud & DevOps, Data Science, etc., sourced from the website."
+  },
+  {
+    "id": 7,
+    "question": "Do I need any prior coding experience to join a Zaio bootcamp?",
+    "expected_source_type": "website",
+    "notes": "Matches an FAQ answer on the ZAIO homepage."
+  },
+  {
+    "id": 8,
+    "question": "How long is the Full Stack AI Engineer bootcamp and what does it cover?",
+    "expected_source_type": "website",
+    "notes": "Tests retrieval from a specific bootcamp landing page."
+  },
+  {
+    "id": 9,
+    "question": "What payment or financing options does Zaio offer?",
+    "expected_source_type": "website",
+    "notes": "Could be answered from either the website's Tuition & Financing page or the handbook's Payments section - tests source selection."
+  },
+  {
+    "id": 10,
+    "question": "How do I join the Zaio Discord community?",
+    "expected_source_type": "website",
+    "notes": "Tests a simple factual lookup from the website."
+  },
+  {
+    "id": 11,
+    "question": "What is the capital of France?",
+    "expected_source_type": "none",
+    "notes": "Completely unrelated to either knowledge source - must trigger the fallback refusal."
+  },
+  {
+    "id": 12,
+    "question": "What is Zaio's stock price on the JSE?",
+    "expected_source_type": "none",
+    "notes": "Plausible-sounding but unanswerable from either source - tests against hallucination."
+  },
+  {
+    "id": 13,
+    "question": "Can I get a full refund if I drop out in month 5 of the bootcamp?",
+    "expected_source_type": "none",
+    "notes": "Handbook only covers the 7-day refund window; this exact scenario isn't specified, so the assistant should not invent an answer beyond what's supported."
+  }
+]
